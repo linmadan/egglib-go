@@ -12,6 +12,9 @@ type Publisher struct {
 }
 
 func (publisher *Publisher) PublishMessages(messages []*application.Message, option map[string]interface{}) error {
+	if dispatcher == nil {
+		return fmt.Errorf("本地消息dispatcher还没有启动")
+	}
 	for _, message := range messages {
 		if err := publisher.messageStore.AppendMessage(message); err != nil {
 			return err

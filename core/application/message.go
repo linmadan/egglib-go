@@ -1,7 +1,7 @@
 package application
 
 import (
-	"suplus-message/pkg/utils"
+	"github.com/linmadan/egglib-go/utils/snowflake"
 	"time"
 )
 
@@ -16,7 +16,7 @@ func NewMessage(data map[string]interface{}) (*Message, error) {
 	message := &Message{
 		OccurredOn: time.Now(),
 	}
-	if IdWorker, err := utils.NewIdWorker(1); err != nil {
+	if IdWorker, err := snowflake.NewIdWorker(1); err != nil {
 		return nil, err
 	} else {
 		if id, err := IdWorker.NextId(); err != nil {

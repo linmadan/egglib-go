@@ -1,9 +1,9 @@
 package beego
 
 import (
+	"github.com/linmadan/egglib-go/utils"
 	"reflect"
 	"strings"
-	"suplus-message/pkg/utils"
 )
 
 var supportTag = map[string]int{

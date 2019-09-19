@@ -65,12 +65,12 @@ func (dispatcher *MessageDispatcher) loadNoPublishedMessages() ([]*application.M
 	}
 }
 
-func LaunchLocalMessageDispatcher(timeInterval time.Duration, messageEngineType string, engineOption map[string]interface{}, storeType string, storeOption map[string]interface{}, ) error {
+func LaunchLocalMessageDispatcher(timeInterval time.Duration, messageEngineType string, engineOptions map[string]interface{}, storeType string, storeOptions map[string]interface{}, ) error {
 	var messageEngine MessageEngine
 	switch messageEngineType {
 	case "sarama":
 		var hosts string
-		if kafkaHosts, ok := engineOption["kafkaHosts"]; ok {
+		if kafkaHosts, ok := engineOptions["kafkaHosts"]; ok {
 			hosts = kafkaHosts.(string)
 		} else {
 			hosts = "localhost:9092"
@@ -86,7 +86,7 @@ func LaunchLocalMessageDispatcher(timeInterval time.Duration, messageEngineType 
 	switch storeType {
 	case "beego":
 		var tc *beegoTransaction.TransactionContext
-		if transactionContext, ok := storeOption["transactionContext"]; ok {
+		if transactionContext, ok := storeOptions["transactionContext"]; ok {
 			tc = transactionContext.(*beegoTransaction.TransactionContext)
 		} else {
 			tc = nil
@@ -107,5 +107,8 @@ func LaunchLocalMessageDispatcher(timeInterval time.Duration, messageEngineType 
 		messagePublishTrackerStore: messagePublishTrackerStore,
 		messageEngine:              messageEngine,
 	}
+	go func(dispatcher *MessageDispatcher) {
+		dispatcher.Dispatch()
+	}(dispatcher)
 	return nil
 }
