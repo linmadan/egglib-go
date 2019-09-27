@@ -18,5 +18,5 @@ type LocalMessage struct {
 }
 
 func (localMessage *LocalMessage) TableName() string {
-	return "local_messages"
+	return "sys_local_messages"
 }

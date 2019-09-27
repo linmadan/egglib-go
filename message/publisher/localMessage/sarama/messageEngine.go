@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"github.com/Shopify/sarama"
 	"github.com/linmadan/egglib-go/core/application"
-	"log"
+	"github.com/linmadan/egglib-go/log"
 	"strings"
 	"time"
 )
 
 type Engine struct {
 	KafkaHosts string
+	Logger     log.Logger
 }
 
 func (engine *Engine) PublishToMessageSystem(messages []*application.Message, option map[string]interface{}) ([]int64, error) {
@@ -26,7 +27,7 @@ func (engine *Engine) PublishToMessageSystem(messages []*application.Message, op
 	}
 	defer func() {
 		if err := producer.Close(); err != nil {
-			log.Fatalln(err)
+			engine.Logger.Error(err.Error())
 		}
 	}()
 	var successMessageIds []int64
@@ -39,10 +40,15 @@ func (engine *Engine) PublishToMessageSystem(messages []*application.Message, op
 			}
 			partition, offset, err := producer.SendMessage(msg)
 			if err != nil {
-				log.Printf("FAILED to send message: %s\n", err)
+				engine.Logger.Error(err.Error())
 			} else {
-				log.Printf("> message sent to topic %s partition %d at offset %d\n", message.MessageType, partition, offset)
 				successMessageIds = append(successMessageIds, message.MessageId)
+				var append = make(map[string]interface{})
+				append["framework"] = "sarama"
+				append["topic"] = message.MessageType
+				append["partition"] = partition
+				append["offset"] = offset
+				engine.Logger.Info("kafka消息发送", append)
 			}
 		}
 	}

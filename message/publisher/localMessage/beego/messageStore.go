@@ -40,7 +40,7 @@ func (messagesStore *MessagesStore) AppendMessage(message *application.Message) 
 
 func (messagesStore *MessagesStore) FindNoPublishedStoredMessages() ([]*application.Message, error) {
 	ormer := messagesStore.getOrmer()
-	querySeter := ormer.QueryTable("local_messages")
+	querySeter := ormer.QueryTable("sys_local_messages")
 	var localMessageModels []*models.LocalMessage
 	if _, err := querySeter.Filter("IsPublished", false).OrderBy("Id").All(&localMessageModels); err != nil {
 		return nil, err
@@ -64,7 +64,7 @@ func (messagesStore *MessagesStore) FinishPublishStoredMessages(messageIds []int
 		messageIdStrs = append(messageIdStrs, strconv.FormatInt(messageId, 10))
 	}
 	ormer := messagesStore.getOrmer()
-	_, err := ormer.Raw("UPDATE local_messages SET is_published = 1 WHERE Id IN (" + strings.Join(messageIdStrs, ",") + ")").Exec()
+	_, err := ormer.Raw("UPDATE sys_local_messages SET is_published = 1 WHERE Id IN (" + strings.Join(messageIdStrs, ",") + ")").Exec()
 	if err != nil {
 		return err
 	}

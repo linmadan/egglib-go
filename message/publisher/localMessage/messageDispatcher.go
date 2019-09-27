@@ -3,6 +3,7 @@ package localMessage
 import (
 	"fmt"
 	"github.com/linmadan/egglib-go/core/application"
+	"github.com/linmadan/egglib-go/log"
 	"github.com/linmadan/egglib-go/message/publisher/localMessage/beego"
 	"github.com/linmadan/egglib-go/message/publisher/localMessage/sarama"
 	beegoTransaction "github.com/linmadan/egglib-go/transaction/beego"
@@ -65,7 +66,7 @@ func (dispatcher *MessageDispatcher) loadNoPublishedMessages() ([]*application.M
 	}
 }
 
-func LaunchLocalMessageDispatcher(timeInterval time.Duration, messageEngineType string, engineOptions map[string]interface{}, storeType string, storeOptions map[string]interface{}, ) error {
+func LaunchLocalMessageDispatcher(timeInterval time.Duration, messageEngineType string, engineOptions map[string]interface{}, storeType string, storeOptions map[string]interface{}, logger log.Logger) error {
 	var messageEngine MessageEngine
 	switch messageEngineType {
 	case "sarama":
@@ -77,6 +78,7 @@ func LaunchLocalMessageDispatcher(timeInterval time.Duration, messageEngineType 
 		}
 		messageEngine = &sarama.Engine{
 			KafkaHosts: hosts,
+			Logger:     logger,
 		}
 	default:
 		return fmt.Errorf("无效的messageEngineType: %s", messageEngineType)

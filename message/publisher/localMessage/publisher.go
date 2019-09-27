@@ -26,7 +26,7 @@ func (publisher *Publisher) PublishMessages(messages []*application.Message, opt
 	return nil
 }
 
-func NewLocalMessagePublisher(storeType string, storeOption map[string]interface{}, ) (*Publisher, error) {
+func NewLocalMessagePublisher(storeType string, storeOption map[string]interface{}) (*Publisher, error) {
 	var messageStore MessageStore
 	switch storeType {
 	case "beego":

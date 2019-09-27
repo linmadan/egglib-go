@@ -39,7 +39,7 @@ func (receivedMessageStore *ReceivedMessageStore) SaveMessage(message *applicati
 
 func (receivedMessageStore *ReceivedMessageStore) FindMessage(messageId int64) (*application.Message, error) {
 	ormer := receivedMessageStore.getOrmer()
-	querySeter := ormer.QueryTable("received_messages")
+	querySeter := ormer.QueryTable("sys_received_messages")
 	receivedMessageModel := new(models.ReceivedMessage)
 	querySeter.Filter("Id", messageId).One(receivedMessageModel)
 	message := &application.Message{

@@ -15,5 +15,5 @@ type MessagePublishTracker struct {
 }
 
 func (publishedMessageTracker *MessagePublishTracker) TableName() string {
-	return "message_publish_trackers"
+	return "sys_message_publish_trackers"
 }

@@ -45,7 +45,7 @@ func (messagePublishTrackerStore *MessagePublishTrackerStore) FinishTrackMessage
 
 func (messagePublishTrackerStore *MessagePublishTrackerStore) HaveMessagePublishTracker() (bool, error) {
 	ormer := messagePublishTrackerStore.getOrmer()
-	querySeter := ormer.QueryTable("message_publish_trackers")
+	querySeter := ormer.QueryTable("sys_message_publish_trackers")
 	var messagePublishTrackerModels []*models.MessagePublishTracker
 	if num, err := querySeter.All(&messagePublishTrackerModels); err != nil {
 		return false, err

@@ -18,5 +18,5 @@ type ReceivedMessage struct {
 }
 
 func (receivedMessage *ReceivedMessage) TableName() string {
-	return "received_messages"
+	return "sys_received_messages"
 }

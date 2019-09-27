@@ -4,13 +4,14 @@ import (
 	"encoding/json"
 	"github.com/Shopify/sarama"
 	"github.com/linmadan/egglib-go/core/application"
-	"log"
+	"github.com/linmadan/egglib-go/log"
 	"strings"
 	"time"
 )
 
 type Publisher struct {
 	KafkaHosts string
+	Logger     log.Logger
 }
 
 func (publisher *Publisher) PublishMessages(messages []*application.Message, option map[string]interface{}) error {
@@ -26,7 +27,7 @@ func (publisher *Publisher) PublishMessages(messages []*application.Message, opt
 	}
 	defer func() {
 		if err := producer.Close(); err != nil {
-			log.Fatalln(err)
+			publisher.Logger.Error(err.Error())
 		}
 	}()
 	for _, message := range messages {
@@ -42,15 +43,21 @@ func (publisher *Publisher) PublishMessages(messages []*application.Message, opt
 			if err != nil {
 				return err
 			} else {
-				log.Printf("> message sent to topic %s partition %d at offset %d\n", message.MessageType, partition, offset)
+				var append = make(map[string]interface{})
+				append["framework"] = "sarama"
+				append["topic"] = message.MessageType
+				append["partition"] = partition
+				append["offset"] = offset
+				publisher.Logger.Info("生产kafka消息", append)
 			}
 		}
 	}
 	return nil
 }
 
-func NewKafkaSaramaMessagePublisher(KafkaHosts string) (*Publisher, error) {
+func NewKafkaSaramaMessagePublisher(kafkaHosts string, logger log.Logger) (*Publisher, error) {
 	return &Publisher{
-		KafkaHosts: KafkaHosts,
+		KafkaHosts: kafkaHosts,
+		Logger:     logger,
 	}, nil
 }
