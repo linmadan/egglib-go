@@ -1,6 +1,6 @@
 package domain
 
-type ConcurrencySafeEntity struct {
+type ConcurrencySafeEntity interface {
 	Entity
-	ConcurrencyVersion int `json:"concurrencyVersion"`
+	ConcurrencyVersion() int64
 }
