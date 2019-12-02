@@ -21,7 +21,7 @@ func (transactionContext *TransactionContext) RollbackTransaction() error {
 	return err
 }
 
-func NewBegoTransactionContext() *TransactionContext {
+func NewBeegoTransactionContext() *TransactionContext {
 	return &TransactionContext{
 		Ormer: orm.NewOrm(),
 	}
