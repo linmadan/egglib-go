@@ -1,4 +1,4 @@
-package localMessage
+package local_message
 
 type MessagePublishTrackerStore interface {
 	HaveMessagePublishTracker() (bool, error)

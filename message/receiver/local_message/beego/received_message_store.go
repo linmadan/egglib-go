@@ -3,7 +3,7 @@ package beego
 import (
 	"github.com/astaxie/beego/orm"
 	"github.com/linmadan/egglib-go/core/application"
-	"github.com/linmadan/egglib-go/message/receiver/localMessage/beego/models"
+	"github.com/linmadan/egglib-go/message/receiver/local_message/beego/models"
 	"github.com/linmadan/egglib-go/transaction/beego"
 	"time"
 )

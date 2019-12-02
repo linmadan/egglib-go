@@ -1,9 +1,9 @@
-package localMessage
+package local_message
 
 import (
 	"fmt"
 	"github.com/linmadan/egglib-go/core/application"
-	"github.com/linmadan/egglib-go/message/publisher/localMessage/beego"
+	"github.com/linmadan/egglib-go/message/publisher/local_message/beego"
 	beegoTransaction "github.com/linmadan/egglib-go/transaction/beego"
 )
 

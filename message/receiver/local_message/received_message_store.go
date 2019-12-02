@@ -1,4 +1,4 @@
-package localMessage
+package local_message
 
 import (
 	"github.com/linmadan/egglib-go/core/application"

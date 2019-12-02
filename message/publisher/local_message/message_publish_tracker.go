@@ -1,4 +1,4 @@
-package localMessage
+package local_message
 
 import (
 	"time"
