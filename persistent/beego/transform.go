@@ -1,7 +1,7 @@
 package beego
 
 import (
-	"github.com/linmadan/egglib-go/utils"
+	"github.com/linmadan/egglib-go/utils/tool_funs"
 	"reflect"
 	"strings"
 )
@@ -19,7 +19,7 @@ func TransformDomainModelToBeegoModel(domainModel, beegoModel interface{}) error
 	for i := 0; i < beegoModelType.NumField(); i++ {
 		field := beegoModelType.Field(i)
 		tagStr := field.Tag.Get("domain")
-		attrs, tags, err := utils.ParseStructTag(tagStr, supportTag)
+		attrs, tags, err := tool_funs.ParseStructTag(tagStr, supportTag)
 		if err != nil {
 			return err
 		}
@@ -75,7 +75,7 @@ func TransformBeegoModelToDomainModel(domainModel, beegoModel interface{}) error
 	for i := 0; i < beegoModelType.NumField(); i++ {
 		field := beegoModelType.Field(i)
 		tagStr := field.Tag.Get("domain")
-		attrs, tags, err := utils.ParseStructTag(tagStr, supportTag)
+		attrs, tags, err := tool_funs.ParseStructTag(tagStr, supportTag)
 		if err != nil {
 			return err
 		}

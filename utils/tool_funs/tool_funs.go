@@ -1,7 +1,8 @@
-package utils
+package tool_funs
 
 import (
 	"fmt"
+	"github.com/linmadan/egglib-go/utils/string_convert"
 	"reflect"
 	"strings"
 )
@@ -34,7 +35,7 @@ func SimpleStructToMap(toMapStruct interface{}) map[string]interface{} {
 	relType := elem.Type()
 	m := make(map[string]interface{})
 	for i := 0; i < relType.NumField(); i++ {
-		m[relType.Field(i).Name] = elem.Field(i).Interface()
+		m[string_convert.CamelCase(relType.Field(i).Name, false, false)] = elem.Field(i).Interface()
 	}
 	return m
 }
