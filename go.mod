@@ -5,6 +5,7 @@ go 1.12
 require (
 	github.com/Shopify/sarama v1.23.1
 	github.com/astaxie/beego v1.12.0
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-pg/pg v8.0.6+incompatible
 	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
