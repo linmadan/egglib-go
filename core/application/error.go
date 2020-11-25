@@ -45,37 +45,37 @@ func ThrowError(serviceErrorNo int, attachMessages ...string) error {
 	case INTERNAL_SERVER_ERROR:
 		return &ServiceError{
 			Code:    501 + baseCode*baseCodeMultiple,
-			Message: strings.Join(append([]string{"内部服务出错："}, attachMessages...), ""),
+			Message: strings.Join(append([]string{""}, attachMessages...), ""),
 		}
 	case BAD_GATEWAY_ERROR:
 		return &ServiceError{
 			Code:    502 + baseCode*baseCodeMultiple,
-			Message: strings.Join(append([]string{"服务网关错误："}, attachMessages...), ""),
+			Message: strings.Join(append([]string{""}, attachMessages...), ""),
 		}
 	case TRANSACTION_ERROR:
 		return &ServiceError{
 			Code:    503 + baseCode*baseCodeMultiple,
-			Message: strings.Join(append([]string{"事务处理错误："}, attachMessages...), ""),
+			Message: strings.Join(append([]string{""}, attachMessages...), ""),
 		}
 	case ARG_ERROR:
 		return &ServiceError{
 			Code:    504 + baseCode*baseCodeMultiple,
-			Message: strings.Join(append([]string{"参数认证错误："}, attachMessages...), ""),
+			Message: strings.Join(append([]string{""}, attachMessages...), ""),
 		}
 	case RES_NO_FIND_ERROR:
 		return &ServiceError{
 			Code:    505 + baseCode*baseCodeMultiple,
-			Message: strings.Join(append([]string{"找不到相关资源："}, attachMessages...), ""),
+			Message: strings.Join(append([]string{""}, attachMessages...), ""),
 		}
 	case BUSINESS_ERROR:
 		return &ServiceError{
 			Code:    506 + baseCode*baseCodeMultiple,
-			Message: strings.Join(append([]string{"业务逻辑错误："}, attachMessages...), ""),
+			Message: strings.Join(append([]string{""}, attachMessages...), ""),
 		}
 	default:
 		return &ServiceError{
 			Code:    500 + baseCode*baseCodeMultiple,
-			Message: strings.Join(append([]string{"未定义错误："}, attachMessages...), ""),
+			Message: strings.Join(append([]string{""}, attachMessages...), ""),
 		}
 	}
 }
