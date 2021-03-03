@@ -2,6 +2,7 @@ package utils
 
 import (
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/context"
 	"github.com/linmadan/egglib-go/utils/json"
 )
 
@@ -28,4 +29,13 @@ func (c Controller) Unmarshal(v interface{}) error {
 		body = []byte("{}")
 	}
 	return json.Unmarshal(body, v)
+}
+
+func NewController(ctx *context.Context) Controller {
+	return Controller{
+		beego.Controller{
+			Ctx:  ctx,
+			Data: make(map[interface{}]interface{}),
+		},
+	}
 }
