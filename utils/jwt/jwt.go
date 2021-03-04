@@ -5,11 +5,6 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
-type UserClaims struct {
-	User                interface{} `json:"user"`
-	ResourcePermissions interface{} `json:"resourcePermissions"`
-	jwt.StandardClaims
-}
 type alg string
 
 const (
@@ -39,23 +34,39 @@ var (
 	ErrUnexpectedSigningMethod = errors.New("unexpected signing method")
 )
 
-func Sign(payload map[string]interface{}, secret string, method alg) (string, error) {
+func Sign(claims jwt.Claims, secret string, method alg) (string, error) {
 	var signingMethod jwt.SigningMethod
 	switch method {
 	default:
 		signingMethod = jwt.SigningMethodHS256
 	}
-	user, _ := payload["user"]
-	resourcePermissions, _ := payload["resourcePermissions"]
-	claims := UserClaims{
-		User:                user,
-		ResourcePermissions: resourcePermissions,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: 15000,
-		},
-	}
 	token := jwt.NewWithClaims(signingMethod, claims)
 	signingKey := []byte(secret)
 	tokenString, err := token.SignedString(signingKey)
 	return tokenString, err
+}
+
+func Valid(tokenString string, claims jwt.Claims, secret string, ) (bool, *jwt.Token, error) {
+	token, err := jwt.ParseWithClaims(
+		tokenString,
+		claims,
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte(secret), nil
+		})
+	if err != nil {
+		return false, nil, err
+	}
+	if token.Valid {
+		return true, token, nil
+	} else {
+		return false, nil, nil
+	}
+}
+
+func IsExpired(err error) bool {
+	ve, ok := err.(*jwt.ValidationError)
+	if ok && ve.Errors == jwt.ValidationErrorExpired {
+		return true
+	}
+	return false
 }

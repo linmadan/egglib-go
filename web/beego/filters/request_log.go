@@ -1,7 +1,7 @@
 package filters
 
 import (
-	"github.com/astaxie/beego/context"
+	"github.com/beego/beego/v2/server/web/context"
 	"github.com/linmadan/egglib-go/log"
 )
 
@@ -16,7 +16,7 @@ func CreateRequstLogFilter(logger log.Logger) func(ctx *context.Context) {
 			logger.Debug("http请求", append)
 		}
 		if ctx.Input.Is("POST") {
-			append["inputData"] = string(ctx.Input.GetData("requestBody").([]byte))
+			append["inputData"] = string(ctx.Input.RequestBody)
 			logger.Debug("http请求", append)
 		}
 	}
