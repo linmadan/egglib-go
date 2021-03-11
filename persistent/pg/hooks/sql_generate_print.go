@@ -13,6 +13,10 @@ func (hook SqlGeneratePrintHook) BeforeQuery(c context.Context, q *pg.QueryEvent
 }
 
 func (hook SqlGeneratePrintHook) AfterQuery(c context.Context, q *pg.QueryEvent) error {
-	fmt.Println(q.FormattedQuery())
+	sqlStr, err := q.FormattedQuery()
+	if err != nil {
+		return err
+	}
+	fmt.Println(string(sqlStr))
 	return nil
 }
