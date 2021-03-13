@@ -1,4 +1,4 @@
-package jtime
+package custom_type
 
 import (
 	"database/sql/driver"
