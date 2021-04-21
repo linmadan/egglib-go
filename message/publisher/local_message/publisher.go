@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"github.com/linmadan/egglib-go/core/application"
 	"github.com/linmadan/egglib-go/message/publisher/local_message/beego"
+	"github.com/linmadan/egglib-go/message/publisher/local_message/pg"
 	beegoTransaction "github.com/linmadan/egglib-go/transaction/beego"
+	pgTransaction "github.com/linmadan/egglib-go/transaction/pg"
 )
 
 type Publisher struct {
@@ -37,6 +39,16 @@ func NewLocalMessagePublisher(storeType string, storeOption map[string]interface
 			tc = nil
 		}
 		messageStore = &beego.MessagesStore{
+			TransactionContext: tc,
+		}
+	case "pg":
+		var tc *pgTransaction.TransactionContext
+		if transactionContext, ok := storeOption["transactionContext"]; ok {
+			tc = transactionContext.(*pgTransaction.TransactionContext)
+		} else {
+			tc = nil
+		}
+		messageStore = &pg.MessagesStore{
 			TransactionContext: tc,
 		}
 	default:
