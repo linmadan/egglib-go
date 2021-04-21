@@ -5,8 +5,10 @@ import (
 	"github.com/linmadan/egglib-go/core/application"
 	"github.com/linmadan/egglib-go/log"
 	"github.com/linmadan/egglib-go/message/publisher/local_message/beego"
+	"github.com/linmadan/egglib-go/message/publisher/local_message/pg"
 	"github.com/linmadan/egglib-go/message/publisher/local_message/sarama"
 	beegoTransaction "github.com/linmadan/egglib-go/transaction/beego"
+	pgTransaction "github.com/linmadan/egglib-go/transaction/pg"
 	"time"
 )
 
@@ -97,6 +99,19 @@ func LaunchLocalMessageDispatcher(timeInterval time.Duration, messageEngineType 
 			TransactionContext: tc,
 		}
 		messagePublishTrackerStore = &beego.MessagePublishTrackerStore{
+			TransactionContext: tc,
+		}
+	case "pg":
+		var tc *pgTransaction.TransactionContext
+		if transactionContext, ok := storeOptions["transactionContext"]; ok {
+			tc = transactionContext.(*pgTransaction.TransactionContext)
+		} else {
+			tc = nil
+		}
+		messageStore = &pg.MessagesStore{
+			TransactionContext: tc,
+		}
+		messagePublishTrackerStore = &pg.MessagePublishTrackerStore{
 			TransactionContext: tc,
 		}
 	default:

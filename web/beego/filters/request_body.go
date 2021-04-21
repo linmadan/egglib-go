@@ -1,7 +1,7 @@
 package filters
 
 import (
-	"github.com/astaxie/beego/context"
+	"github.com/beego/beego/v2/server/web/context"
 	"io/ioutil"
 )
 

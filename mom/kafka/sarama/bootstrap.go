@@ -10,11 +10,11 @@ import (
 
 func StartConsume(kafkaHosts string, groupId string, messageHandlerMap map[string]func(message *sarama.ConsumerMessage) error, logger log.Logger) error {
 	config := sarama.NewConfig()
-	version, err := sarama.ParseKafkaVersion("2.1.1")
-	if err != nil {
-		return err
-	}
-	config.Version = version
+	//version, err := sarama.ParseKafkaVersion("2.1.1")
+	//if err != nil {
+	//	return err
+	//}
+	config.Version = sarama.V0_10_2_1
 	config.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRoundRobin
 	config.Consumer.Offsets.Initial = sarama.OffsetOldest
 	brokerList := strings.Split(kafkaHosts, ",")

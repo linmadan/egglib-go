@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"github.com/linmadan/egglib-go/core/application"
 	"github.com/linmadan/egglib-go/message/receiver/local_message/beego"
+	"github.com/linmadan/egglib-go/message/receiver/local_message/pg"
 	"github.com/linmadan/egglib-go/message/receiver/local_message/sarama"
 	beegoTransaction "github.com/linmadan/egglib-go/transaction/beego"
+	pgTransaction "github.com/linmadan/egglib-go/transaction/pg"
 )
 
 type Receiver struct {
@@ -54,6 +56,16 @@ func NewLocalMessageReceiver(converterType string, converterOption map[string]in
 			tc = nil
 		}
 		receivedMessageStore = &beego.ReceivedMessageStore{
+			TransactionContext: tc,
+		}
+	case "pg":
+		var tc *pgTransaction.TransactionContext
+		if transactionContext, ok := storeOption["transactionContext"]; ok {
+			tc = transactionContext.(*pgTransaction.TransactionContext)
+		} else {
+			tc = nil
+		}
+		receivedMessageStore = &pg.ReceivedMessageStore{
 			TransactionContext: tc,
 		}
 	default:
