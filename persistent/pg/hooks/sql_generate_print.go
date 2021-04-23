@@ -7,7 +7,7 @@ import (
 )
 
 type SqlGeneratePrintHook struct {
-	logger log.Logger
+	Logger log.Logger
 }
 
 func (hook SqlGeneratePrintHook) BeforeQuery(c context.Context, q *pg.QueryEvent) (context.Context, error) {
@@ -19,6 +19,6 @@ func (hook SqlGeneratePrintHook) AfterQuery(c context.Context, q *pg.QueryEvent)
 	if err != nil {
 		return err
 	}
-	hook.logger.Debug(string(sqlStr))
+	hook.Logger.Debug(string(sqlStr))
 	return nil
 }
