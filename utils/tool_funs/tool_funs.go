@@ -50,6 +50,13 @@ func SimpleStructToMap(toMapStruct interface{}) map[string]interface{} {
 	return m
 }
 
+func SimpleWrapGridMap(total int64, list interface{}) map[string]interface{} {
+	grid := map[string]interface{}{"total": total, "list": list}
+	return map[string]interface{}{
+		"grid": grid,
+	}
+}
+
 func QueryOptionsStructToMap(toMapQueryOptionsStruct interface{}) map[string]interface{} {
 	elem := reflect.ValueOf(toMapQueryOptionsStruct).Elem()
 	relType := elem.Type()
