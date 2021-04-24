@@ -37,6 +37,16 @@ func SimpleStructToMap(toMapStruct interface{}) map[string]interface{} {
 	for i := 0; i < relType.NumField(); i++ {
 		m[string_convert.CamelCase(relType.Field(i).Name, false, false)] = elem.Field(i).Interface()
 	}
+	if pageNumber, ok := m["pageNumber"]; ok {
+		var pageSize int64
+		if _, ok := m["pageSize"]; ok {
+			pageSize = m["pageSize"].(int64)
+		} else {
+			pageSize = 20
+		}
+		m["offset"] = (pageNumber.(int64) - 1) * pageSize
+		m["limit"] = pageSize
+	}
 	return m
 }
 

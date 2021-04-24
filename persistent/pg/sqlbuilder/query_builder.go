@@ -46,7 +46,7 @@ func (query *Query) SetUpdateByQueryOption(condition string, optionKey string) *
 func (query *Query) SetOffsetAndLimit(defaultLimit int) *Query {
 	if offset, ok := query.queryOptions["offset"]; ok {
 		offset, _ := strconv.ParseInt(fmt.Sprintf("%v", offset), 10, 64)
-		if offset > -1 {
+		if offset >= 0 {
 			query.Offset(int(offset))
 		}
 	} else {
@@ -54,11 +54,15 @@ func (query *Query) SetOffsetAndLimit(defaultLimit int) *Query {
 	}
 	if limit, ok := query.queryOptions["limit"]; ok {
 		limit, _ := strconv.ParseInt(fmt.Sprintf("%v", limit), 10, 64)
-		if limit > 0 {
-			query.Limit(int(limit))
-		} else {
+		if limit == 0 {
 			query.Limit(defaultLimit)
+		} else {
+			if limit > 0 {
+				query.Limit(int(limit))
+			}
 		}
+	} else {
+		query.Limit(defaultLimit)
 	}
 	return query
 }
