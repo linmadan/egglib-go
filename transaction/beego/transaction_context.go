@@ -1,23 +1,25 @@
 package beego
 
-import "github.com/astaxie/beego/orm"
+import "github.com/beego/beego/v2/client/orm"
 
 type TransactionContext struct {
-	Ormer orm.Ormer
+	Ormer   orm.Ormer
+	TxOrmer orm.TxOrmer
 }
 
 func (transactionContext *TransactionContext) StartTransaction() error {
-	err := transactionContext.Ormer.Begin()
+	var err error
+	transactionContext.TxOrmer, err = transactionContext.Ormer.Begin()
 	return err
 }
 
 func (transactionContext *TransactionContext) CommitTransaction() error {
-	err := transactionContext.Ormer.Commit()
+	err := transactionContext.TxOrmer.Commit()
 	return err
 }
 
 func (transactionContext *TransactionContext) RollbackTransaction() error {
-	err := transactionContext.Ormer.Rollback()
+	err := transactionContext.TxOrmer.Rollback()
 	return err
 }
 
