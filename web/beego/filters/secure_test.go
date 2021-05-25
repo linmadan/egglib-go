@@ -24,7 +24,6 @@ func TestSecureHandler(t *testing.T) {
 	SecureHttpRequest(r, "")
 	w := httptest.NewRecorder()
 	server.Handlers.ServeHTTP(w, r)
-	//web.BeeApp.
 	assert.Equal(t, http.StatusOK, w.Code)
 }
 
@@ -84,6 +83,7 @@ func TestSecureHandler_CheckRequestQuery_Get(t *testing.T) {
 	server.InsertFilter("/*", web.BeforeExec, SecureHandler(WithEnableCheckRequestQueryData(true), WithValidDuration(time.Second*100)))
 	r := httptest.NewRequest(http.MethodGet, "/url?id=1&data=2", nil)
 	SecureHttpRequest(r, "123456", WithEnableCheckRequestQueryData(true))
+	//SecureHttpRequest(r, "123456")
 	w := httptest.NewRecorder()
 	server.Handlers.ServeHTTP(w, r)
 	assert.Equal(t, http.StatusOK, w.Code)
@@ -96,8 +96,26 @@ func TestSecureHandler_CheckRequestQuery_Post(t *testing.T) {
 	})
 	server.InsertFilter("/*", web.BeforeExec, SecureHandler(WithEnableCheckRequestQueryData(true)))
 	r := httptest.NewRequest(http.MethodPost, "/url?id=1&data=2", nil)
-	r.Body = ioutil.NopCloser(bytes.NewBuffer([]byte("hello world!"))) // crc32 body
+	r.Body = ioutil.NopCloser(bytes.NewBuffer([]byte(`{"data":"hello world!"}`))) // crc32 body
 	SecureHttpRequest(r, "123456", WithEnableCheckRequestQueryData(true))
+	w := httptest.NewRecorder()
+	server.Handlers.ServeHTTP(w, r)
+	assert.Equal(t, http.StatusOK, w.Code)
+}
+
+func TestSecureHandler_CheckAppSecret_Post(t *testing.T) {
+	var (
+		key    = "app1"
+		secret = "g47edfges745"
+	)
+	server := web.NewHttpSever()
+	server.Post("/*", func(context *context.Context) {
+		context.WriteString("ok")
+	})
+	server.InsertFilter("/*", web.BeforeExec, SecureHandler(WithEnableCheckRequestQueryData(true), WithAppKeySecret(key, secret)))
+	r := httptest.NewRequest(http.MethodPost, "/url?id=1&data=2", nil)
+	r.Body = ioutil.NopCloser(bytes.NewBuffer([]byte("hello world!"))) // crc32 body
+	SecureHttpRequest(r, "123456", WithEnableCheckRequestQueryData(true), WithAppKeySecret(key, secret))
 	w := httptest.NewRecorder()
 	server.Handlers.ServeHTTP(w, r)
 	assert.Equal(t, http.StatusOK, w.Code)

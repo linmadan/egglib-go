@@ -23,6 +23,7 @@ const (
 	secureSign = "secureSign"
 	token      = "token"
 	nonce      = "nonce"
+	appKey     = "appKey"
 )
 
 var (
@@ -32,14 +33,16 @@ var (
 		secureSign: "x-mmm-sign",
 		token:      "x-mmm-token",
 		nonce:      "x-mmm-nonce",
+		appKey:     "x-mmm-key",
 	}
-	defaultValidDuration = 60 * time.Second
+	defaultValidDuration = 5 * 60 * time.Second
 )
 
 var (
 	errorInvalidTimestamp = errors.New("timestamp is invalid")
 	errorInvalidSign      = errors.New("secure sign is invalid")
 	errorInvalidRequest   = errors.New("request query data is invalid")
+	errorInvalidAppSecret = errors.New("app secret is invalid")
 )
 
 // OnInvalidRequestCallBack 非法的接口访问进行回调,做后续处理
@@ -56,8 +59,18 @@ type (
 		EnableCheckRequestQueryData bool
 		// 启用检查时间 （防止请求被多次重放）
 		EnableCheckTimestamp bool
+		// 给外部应用配置 appKey  + appSecret 作为签名加密的一部分
+		AppKeySecretStore AppKeySecretStore
 	}
 	secureOption func(options *SecureOptions)
+
+	// 存取 AppKey-Secret
+	AppKeySecretStore interface {
+		GetSecret(appKey string) (string, error)
+		AddSecret(appKey, appSecret string) error
+		Remove(appKey string) error
+	}
+	appKeySecretStore map[string]string
 )
 
 // SecureHandler api安全拦截处理,请求头里面包含有效的签名,才允许进行后续的接口访问
@@ -112,10 +125,15 @@ func RequestSecureSign(req *http.Request, secureOptions *SecureOptions) string {
 	requestId := req.Header.Get(SecureKeyMap[requestId])
 	token := req.Header.Get(SecureKeyMap[token])
 	nonce := req.Header.Get(SecureKeyMap[nonce])
+	appKey := req.Header.Get(SecureKeyMap[appKey])
 	if !secureOptions.EnableCheckRequestQueryData {
 		nonce = ""
 	}
 	requestSecureSign := fmt.Sprintf("v!(MmM%v%v%v%vMmM)i^", timestamp, requestId, token, nonce) //timestamp + requestId + token + nonce
+	// 外部应用接入
+	if appSecret, err := secureOptions.AppKeySecretStore.GetSecret(appKey); err == nil && len(appSecret) > 0 {
+		requestSecureSign = fmt.Sprintf("%v%v%v%v%v", appSecret, timestamp, requestId, token, nonce) //appSecret  + timestamp + requestId + token + nonce
+	}
 	sha256 := sha256.New()
 	sha256.Write([]byte(requestSecureSign))
 	signHex := hex.EncodeToString(sha256.Sum(nil))
@@ -142,7 +160,7 @@ func validSecureSign(ctx *context.Context, secureOptions *SecureOptions) error {
 	if clientSign = ctx.Request.Header.Get(SecureKeyMap[secureSign]); len(clientSign) == 0 {
 		return errorInvalidSign
 	}
-	serveSign := RequestSecureSign(ctx.Request, secureOptions) //secureOptions.RequestSecureSignFunc(ctx.Request,secureOptions)
+	serveSign := secureOptions.RequestSecureSignFunc(ctx.Request, secureOptions) //secureOptions.RequestSecureSignFunc(ctx.Request,secureOptions)
 	if !strings.EqualFold(serveSign, clientSign) {
 		return errorInvalidSign
 	}
@@ -204,6 +222,7 @@ func NewSecureOptions(options ...secureOption) *SecureOptions {
 		RequestSecureSignFunc:       RequestSecureSign,
 		EnableCheckRequestQueryData: false,
 		EnableCheckTimestamp:        true,
+		AppKeySecretStore:           appKeySecretStore(map[string]string{}),
 	}
 	for i := range options {
 		options[i](&secureOptions)
@@ -240,4 +259,33 @@ func WithEnableCheckTimestamp(flag bool) secureOption {
 	return func(options *SecureOptions) {
 		options.EnableCheckTimestamp = flag
 	}
+}
+
+func WithAppKeySecretStore(store AppKeySecretStore) secureOption {
+	return func(options *SecureOptions) {
+		options.AppKeySecretStore = store
+	}
+}
+
+func WithAppKeySecret(appKey, appSecret string) secureOption {
+	return func(options *SecureOptions) {
+		options.AppKeySecretStore.AddSecret(appKey, appSecret)
+	}
+}
+
+func (store appKeySecretStore) GetSecret(appKey string) (string, error) {
+	if v, ok := store[appKey]; ok {
+		return v, nil
+	}
+	return "", errorInvalidAppSecret
+}
+
+func (store appKeySecretStore) AddSecret(appKey, appSecret string) error {
+	store[appKey] = appSecret
+	return nil
+}
+
+func (store appKeySecretStore) Remove(appKey string) error {
+	delete(store, appKey)
+	return nil
 }
