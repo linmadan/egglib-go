@@ -2,6 +2,8 @@ package logrus
 
 import (
 	"github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus/hooks/writer"
+	"io"
 	"os"
 )
 
@@ -39,6 +41,19 @@ func (logger *Logger) SetLevel(level string) {
 	default:
 		logger.logrus.Level = logrus.DebugLevel
 	}
+}
+
+func (logger *Logger) AddHook(w io.Writer) {
+	level := logger.logrus.Level
+	var levels []logrus.Level
+	// 默认已经添加了一个当前log level的hook,所以此处 level+1
+	for i := level + 1; i <= logrus.TraceLevel; i++ {
+		levels = append(levels, level)
+	}
+	logger.logrus.AddHook(&writer.Hook{
+		Writer:    w,
+		LogLevels: levels,
+	})
 }
 
 func (logger *Logger) Trace(msg string, appends ...map[string]interface{}) {
