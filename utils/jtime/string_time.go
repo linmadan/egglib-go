@@ -1,6 +1,7 @@
 package jtime
 
 import (
+	"database/sql"
 	"database/sql/driver"
 	"fmt"
 	"time"
@@ -65,9 +66,10 @@ func (t JsonTime) Value() (driver.Value, error) {
 
 //Scan 实现sql.Scanner接口， 从数据库中取出数据
 func (t *JsonTime) Scan(v interface{}) error {
-	value, ok := v.(time.Time)
-	if ok {
-		*t = JsonTime{Time: value}
+	sqlTime := sql.NullTime{}
+	err := sqlTime.Scan(v)
+	if err == nil {
+		*t = JsonTime{Time: sqlTime.Time}
 		return nil
 	}
 	return fmt.Errorf("can not convert %v to timestamp", v)

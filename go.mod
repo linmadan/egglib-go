@@ -3,6 +3,7 @@ module github.com/linmadan/egglib-go
 go 1.14
 
 require (
+	github.com/360EntSecGroup-Skylar/excelize/v2 v2.4.0
 	github.com/Shopify/sarama v1.23.1
 	github.com/astaxie/beego v1.12.0
 	github.com/beego/beego/v2 v2.0.1
