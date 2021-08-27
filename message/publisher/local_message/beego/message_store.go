@@ -1,7 +1,7 @@
 package beego
 
 import (
-	"github.com/astaxie/beego/orm"
+	"github.com/beego/beego/v2/client/orm"
 	"github.com/linmadan/egglib-go/core/application"
 	"github.com/linmadan/egglib-go/message/publisher/local_message/beego/models"
 	"github.com/linmadan/egglib-go/transaction/beego"

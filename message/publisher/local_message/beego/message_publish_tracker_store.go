@@ -1,7 +1,7 @@
 package beego
 
 import (
-	"github.com/astaxie/beego/orm"
+	"github.com/beego/beego/v2/client/orm"
 	"github.com/linmadan/egglib-go/message/publisher/local_message/beego/models"
 	"github.com/linmadan/egglib-go/transaction/beego"
 )
@@ -22,8 +22,7 @@ func (messagePublishTrackerStore *MessagePublishTrackerStore) getOrmer() orm.Orm
 
 func (messagePublishTrackerStore *MessagePublishTrackerStore) StartTrackMessagePublish() (int64, error) {
 	ormer := messagePublishTrackerStore.getOrmer()
-	messagePublishTrackerModel := &models.MessagePublishTracker{
-	}
+	messagePublishTrackerModel := &models.MessagePublishTracker{}
 	if messagePublishTrackerId, err := ormer.Insert(messagePublishTrackerModel); err != nil {
 		return 0, err
 	} else {
